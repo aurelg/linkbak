@@ -1,0 +1,3 @@
+tests/output/*
+tests/input/*
+.mypy_cache

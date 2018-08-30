@@ -1,0 +1,5 @@
+- add tests
+- add tests
+- add more tests
+- add installer, packages, etc.
+- Fix `Chromium`'s segfault in Docker
