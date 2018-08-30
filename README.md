@@ -15,7 +15,7 @@ failed attempts can be ignored or retried, and a custom timeout is supported.
 - Atom (URL or local)
 - RSS (URL or local)
 - HTML (local)
-- text file containing a list of URLs (one per lines)
+- text file containing a list of URLs (one per line)
 
 ## Output
 
@@ -30,7 +30,7 @@ The easy way, with Docker:
 ```
 git clone https://github.com/aurelg/linkbak.git
 cd linkbak
-docker built -t linkbak .
+docker build -t linkbak .
 ```
 
 _For some reason, `chromium` headless segfaults in the docker container, which
