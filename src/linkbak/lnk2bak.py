@@ -52,7 +52,7 @@ def merge_json():
 
     output_dir = get_output_dir()
 
-    for jsonfile in Path(output_dir).glob(f"{output_dir}/*/*.json"):
+    for jsonfile in Path(output_dir).glob("*/metadata.json"):
         if str(jsonfile) == f"{output_dir}/results.json":
             continue
         get_logger().debug("Appending %s", str(jsonfile))
