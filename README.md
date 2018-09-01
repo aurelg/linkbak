@@ -49,7 +49,7 @@ docker run \
 
 You may want to define an alias like:
 
-`alias linkbak='docker run -v $(pwd):/workdir -u $(id -u):$(id -g) --rm -ti linkbak /linkbak/src/linkbak/lnk2bak.py'`
+`alias linkbak='docker run -v \$(pwd):/workdir -u $(id -u):$(id -g) --rm -ti linkbak /linkbak/src/linkbak/lnk2bak.py'`
 
 This command downloads HTML and generates PDFs for each of the links found in
 the Shaarli atom feed on Github, allowing up to 10 downloads in parallel.
