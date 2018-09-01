@@ -78,7 +78,12 @@ class PDFHandler(BaseHandler):
 
     def run(self, link, args):
         # TODO Should be able to use a custom profile (e.g. with ublock origin)
-        cmdargs = ["chromium", "--headless", "--print-to-pdf", link]
+        # TODO remove `--no-sandbox`. This is currently required by the
+        # Dockerfile, which should be fixed first.
+        cmdargs = [
+            args.chrome_binary, "--headless", "--no-sandbox", "--print-to-pdf",
+            link
+        ]
         run(cmdargs,
             stdout=PIPE,
             stderr=PIPE,

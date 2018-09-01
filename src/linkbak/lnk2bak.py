@@ -52,7 +52,7 @@ def merge_json():
 
     output_dir = get_output_dir()
 
-    for jsonfile in Path(output_dir).glob("**/*.json"):
+    for jsonfile in Path(output_dir).glob(f"{output_dir}/*/*.json"):
         if str(jsonfile) == f"{output_dir}/results.json":
             continue
         get_logger().debug("Appending %s", str(jsonfile))
@@ -68,6 +68,7 @@ def parse_args():
     Parse arguments
     """
     default_timeout = 60
+    default_chrome_binary = "chromium"
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "file",
@@ -87,6 +88,12 @@ def parse_args():
         type=int,
         help="Number of parallel link processing (default: %s)" %
         os.cpu_count())
+    parser.add_argument(
+        "-cb",
+        "--chrome-binary",
+        default=default_chrome_binary,
+        help="Path to the chrome/chromium binary (default: %s)" %
+        default_chrome_binary)
     parser.add_argument(
         "-v", "--verbose", action='store_true', help="Verbose mode")
 

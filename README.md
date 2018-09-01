@@ -33,16 +33,23 @@ cd linkbak
 docker build -t linkbak .
 ```
 
-_For some reason, `chromium` headless segfaults in the docker container, which
-won't be able to generate PDFs._
-
 # Example
 
 Example: `lnk2bak.py -v -j10 https://github.com/shaarli/Shaarli/releases.atom`
 
 Or with docker:
 
-`docker run -v $(pwd):/linkbak/output linkbak -v -j10 https://github.com/shaarli/Shaarli/releases.atom`
+```
+docker run \
+  -v $(pwd):/workdir \
+  -u $(id -u):$(id -g) \
+  --rm -ti linkbak \
+  /linkbak/src/linkbak/lnk2bak.py -j1 -v links.txt
+```
+
+You may want to define an alias like:
+
+`alias linkbak='docker run -v $(pwd):/workdir -u $(id -u):$(id -g) --rm -ti linkbak /linkbak/src/linkbak/lnk2bak.py'`
 
 This command downloads HTML and generates PDFs for each of the links found in
 the Shaarli atom feed on Github, allowing up to 10 downloads in parallel.
