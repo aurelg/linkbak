@@ -11,7 +11,7 @@
 #   linkbak \
 #   /linkbak/src/linkbak/lnk2bak.py [OPTIONS] file_or_url
 #
-#
+
 FROM python:3.7.0-slim-stretch
 LABEL name="linkbak" \
 			maintainer="Aurélien Grosdidier <aurelien.grosdidier@gmail.com>" \
@@ -21,6 +21,7 @@ LABEL name="linkbak" \
 # Install Chromium
 RUN apt-get update && apt-get install -y \
 	chromium \
+  dumb-init \
 	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -35,3 +36,6 @@ ENV PYTHONPATH $LINKBAK/src
 
 # Set input/output directory
 WORKDIR /workdir
+
+# use dumb-init as the entry point
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
