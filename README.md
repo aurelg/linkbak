@@ -27,11 +27,8 @@ track of which links are stored in which directory.
 
 The easy way, with Docker:
 
-```
-git clone https://github.com/aurelg/linkbak.git
-cd linkbak
-docker build -t linkbak .
-```
+- Retrieve from docker hub: `docker pull aurelg/linkbak`
+- Or create your image locally: `git clone https://github.com/aurelg/linkbak.git && docker build -t linkbak linkbak/`
 
 # Example
 
