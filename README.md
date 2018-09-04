@@ -30,6 +30,14 @@ The easy way, with Docker:
 - Retrieve from docker hub: `docker pull aurelg/linkbak`
 - Or create your image locally: `git clone https://github.com/aurelg/linkbak.git && docker build -t linkbak linkbak/`
 
+If you want to install it manually, just clone this repository and make sure you
+have the following dependencies installed:
+
+- `chromium` (or `google-chrome`)
+- `texlive`
+- `pandoc`
+- `nodejs` (and a few packages than can be installed with `npm install ...`: `fs`, `jsdom` and `https://github.com/mozilla/readability`)
+
 # Example
 
 Example: `lnk2bak.py -v -j10 https://github.com/shaarli/Shaarli/releases.atom`
@@ -41,12 +49,12 @@ docker run \
   -v $(pwd):/workdir \
   -u $(id -u):$(id -g) \
   --rm -ti linkbak \
-  /linkbak/src/linkbak/lnk2bak.py -j1 -v links.txt
+  /linkbak/src/linkbak/lnk2bak.py -j1 -vvv links.txt
 ```
 
 You may want to define an alias like:
 
-`alias linkbak='docker run -v \$(pwd):/workdir -u $(id -u):$(id -g) --rm -ti linkbak /linkbak/src/linkbak/lnk2bak.py'`
+`alias linkbak='docker run -v \$(pwd):/workdir -u $(id -u):$(id -g) --rm -ti aurelg/linkbak /linkbak/src/linkbak/lnk2bak.py'`
 
 This command downloads HTML and generates PDFs for each of the links found in
 the Shaarli atom feed on Github, allowing up to 10 downloads in parallel.
