@@ -67,10 +67,8 @@ class BaseHandler:
             # Run dependencies
 
             for required in self.requires:
-                if args.verbose:
-                    logger.debug("Running %s dependency %s for %s",
-                                 self.__class__.__name__, required.__name__,
-                                 link)
+                logger.debug("Running %s dependency %s for %s",
+                             self.__class__.__name__, required.__name__, link)
                 meta = required().run_wrapper(link, meta, args)
                 assert isinstance(meta, dict)
             try:
