@@ -89,7 +89,7 @@ def get_links(filename):
 
     # Try to parse as feed
 
-    links = []
+    links = ()
 
     for parser in [parse_feed, parse_html, parse_list]:
         if not links:

@@ -21,7 +21,9 @@ import multiprocessing
 import os
 from pathlib import Path
 
-from handlers import HTMLHandler, MetadataHandler, PDFHandler
+from handlers import (DomHandler, EpubHandler, HTMLHandler, MarkdownHandler,
+                      MetadataHandler, MobiHandler, PDFHandler,
+                      ReadableHandler, ReadablePDFHandler)
 from utils import get_link_path, get_links, get_logger, get_output_dir
 
 
@@ -34,14 +36,27 @@ def start_link_handler(link, args):
     """
     get_logger().warning("Processing %s", link)
 
-    handlers = [PDFHandler, MetadataHandler, HTMLHandler]
+    handlers = [
+        HTMLHandler, PDFHandler, DomHandler, ReadableHandler, EpubHandler,
+        MobiHandler, MarkdownHandler, ReadablePDFHandler
+    ]
     outdir = Path(get_link_path(link))
 
     if not outdir.exists():
         outdir.mkdir()
 
+    meta = {}
+    meta = MetadataHandler().run_wrapper(link, meta, args)
+    assert isinstance(meta, dict)
+
     for handler_class in handlers:
-        handler_class().run_wrapper(link, args)
+        meta = handler_class().run_wrapper(link, meta, args)
+        assert isinstance(meta, dict)
+
+    assert 'id' in meta
+    assert 'link' in meta
+
+    MetadataHandler().commit(link, meta, args)
 
 
 def merge_json():
@@ -95,9 +110,13 @@ def parse_args():
         help="Path to the chrome/chromium binary (default: %s)" %
         default_chrome_binary)
     parser.add_argument(
-        "-v", "--verbose", action='store_true', help="Verbose mode")
+        "-v", "--verbose", action='append_const', const=1, help="Verbose mode")
 
-    return parser.parse_args()
+    to_return = parser.parse_args()
+    to_return.verbose = 0 if to_return.verbose is None else sum(
+        to_return.verbose)
+
+    return to_return
 
 
 def setup_logging(args):
@@ -113,11 +132,8 @@ def setup_logging(args):
     handler.setFormatter(formatter)
     logger = get_logger()
     logger.addHandler(handler)
-
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.WARNING)
+    loglevel = max([40 - args.verbose * 10, 0])
+    logger.setLevel(loglevel)
 
 
 def main():

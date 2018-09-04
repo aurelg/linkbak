@@ -18,12 +18,35 @@ LABEL name="linkbak" \
 			version="0.1" \
 			description="Linkbak"
 
-# Install Chromium
+# Install:
+# - dumb-init (to avoid zombie processes)
+# - chromium
+# - pandoc and texlive (required for PDF output)
+# - curl/gnupg2/git (required by nodejs below)
 RUN apt-get update && apt-get install -y \
-	chromium \
   dumb-init \
+	chromium \
+  pandoc \
+  texlive \
+  texlive-latex-recommended \
+  texlive-generic-recommended \
+  texlive-latex-extra \
+  lmodern \
+  curl \
+  gnupg2 \
+  git \
 	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
+
+# Install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+  && apt-get install -y nodejs
+
+# Install nodejs dependencies globally with npm
+RUN npm -g install \
+  fs \
+  jsdom \
+  https://github.com/mozilla/readability
 
 # Copy requirements.txt and install dependencies with pip
 ENV LINKBAK /linkbak
