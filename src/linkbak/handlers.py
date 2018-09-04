@@ -3,6 +3,7 @@ Handlers
 """
 
 import json
+import logging
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -81,8 +82,10 @@ class BaseHandler:
                     newfields = {}
             except Exception as exception:
                 # Dump log if it fails
-                with open(f"{target_file}.log", 'w') as logfile_fp:
-                    logfile_fp.write(str(exception))
+
+                if logger.isEnabledFor(logging.DEBUG):
+                    with open(f"{target_file}.log", 'w') as logfile_fp:
+                        logfile_fp.write(str(exception))
 
         # If the expected output file has been generated, register id
 
@@ -202,7 +205,7 @@ class DomHandler(BaseHandler):
     def run(self, link, meta, args):
 
         if meta["sensible-type"] != "html":
-            return
+            return {}
 
         link_path = get_link_path(link)
 
@@ -213,7 +216,7 @@ class DomHandler(BaseHandler):
             stdout=subprocess.PIPE,
             timeout=args.timeout)
 
-        if process.stderr:
+        if process.stderr and get_logger().isEnabledFor(logging.DEBUG):
             with open(f"{link_path}/index.dom.log", 'w') as fp:
                 fp.write(process.stderr.decode())
 
@@ -255,7 +258,7 @@ class ReadableHandler(BaseHandler):
             cwd=link_path,
             timeout=args.timeout)
 
-        if process.stderr:
+        if process.stderr and get_logger().isEnabledFor(logging.DEBUG):
             with open(f"{link_path}/index.readable.html.log", 'w') as fp:
                 fp.write(process.stderr.decode())
 
@@ -282,11 +285,11 @@ class PandocHandler(BaseHandler):
             cwd=link_path,
             timeout=args.timeout)
 
-        if process.stderr:
+        if process.stderr and get_logger().isEnabledFor(logging.DEBUG):
             with open(f"{link_path}/{self.output}.err", 'w') as fp:
                 fp.write(process.stderr.decode())
 
-        if process.stdout:
+        if process.stdout and get_logger().isEnabledFor(logging.DEBUG):
             with open(f"{link_path}/{self.output}.out", 'w') as fp:
                 fp.write(process.stdout.decode())
 
@@ -348,12 +351,12 @@ class ReadablePDFHandler(BaseHandler):
                 cwd=link_path,
                 timeout=args.timeout)
 
-            if process.stderr:
+            if process.stderr and get_logger().isEnabledFor(logging.DEBUG):
                 with open(f"{link_path}/{self.output}.{source}.err",
                           'w') as fp:
                     fp.write(process.stderr.decode())
 
-            if process.stdout:
+            if process.stdout and get_logger().isEnabledFor(logging.DEBUG):
                 with open(f"{link_path}/{self.output}.{source}.out",
                           'w') as fp:
                     fp.write(process.stdout.decode())
