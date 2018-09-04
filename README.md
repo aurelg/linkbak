@@ -3,12 +3,17 @@
 `linkbak` is a web page archiver : it reads a list of links and dumps the
 corresponding pages in HTML and PDF. It is somewhat similar to
 [bookmark-archiver](https://github.com/pirate/bookmark-archiver), but lighter
-(no UI, just raw HTML/PDF dumps) and faster (allowing for several downloads in
-parallel).
+(no UI) and faster.
 
-The HTML content is extracted with `readability`, PDFs are generated with
-`chromium` in `headless` mode. Links can be downloaded in parallel, previous
-failed attempts can be ignored or retried, and a custom timeout is supported.
+The HTML content is extracted with python's `requests`/`readability`, PDFs are
+generated with `chromium` in `headless` mode. For an even better readability,
+the DOM (extracted by `chromium`, again in `headless` mode) is parsed by
+[Mozilla's readability](https://github.com/mozilla/readability) and processed by
+[Pandoc](https://pandoc.org) to produce MOBI, EPUB, Markdown and a cleaner PDF
+output.
+
+Moreover, links can be processed in parallel. Previous failed attempts can be
+either ignored or retried, and a custom timeout is supported.
 
 ## Input
 
@@ -22,6 +27,11 @@ failed attempts can be ignored or retried, and a custom timeout is supported.
 Pages (HTML/PDF) are stored in output directories identified by the sha256 of
 the links to avoid collisions. An additional JSON index is also written to keep
 track of which links are stored in which directory.
+
+Downloaded files can be browsed with your browser:
+
+- start python's integrated web server: `cd output && python -m http.server`
+- open your browser at `http://localhost:8000`
 
 # Installation
 
@@ -113,6 +123,3 @@ links are processed:
  ...
 ]
 ```
-
-This JSON file can probably be used to generate an HTML interface (with
-pagination, hopefully).

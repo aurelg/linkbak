@@ -90,8 +90,9 @@ class BaseHandler:
         # If the expected output file has been generated, register id
 
         if Path(target_file).exists():
+            http_path = "%s/%s" % (get_link_hash(link), self.output)
             newfields[self.__class__.__name__] = [
-                target_file, datetime.now().isoformat()
+                http_path, datetime.now().isoformat()
             ]
 
         assert isinstance(meta, dict)

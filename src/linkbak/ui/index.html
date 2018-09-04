@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Results</title>
+  </head>
+<body onLoad="init()">
+  <div id="target">Loading...</div>
+  <script src="handlebars.js"></script>
+  <script id="entry-template" type="text/x-handlebars-template">
+    <table>
+      <tr>
+        <th>Link</th>
+        <th>HTML</th>
+        <th>PDF</th>
+        <th>EPUB</th>
+        <th>MOBI</th>
+        <th>Markdown</th>
+        <th>ReadablePDF</th>
+      </tr>
+      {{#each records}}
+      <tr>
+        <!--td>{{id}} </td-->
+        <td><a href="{{link}}">{{title}}</a></td>
+        <td>
+          {{#if HTMLHandler}}
+            <a href="{{HTMLHandler.[0]}}">HTML</a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if PDFHandler}}
+            <a href="{{PDFHandler.[0]}}">PDF</a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if EpubHandler}}
+            <a href="{{EpubHandler.[0]}}">EPUB</a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if MobiHandler}}
+            <a href="{{MobiHandler.[0]}}">MOBI</a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if MarkdownHandler}}
+            <a href="{{MarkdownHandler.[0]}}">Markdown</a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if ReadablePDFHandler}}
+            <a href="{{ReadablePDFHandler.[0]}}">ReadablePDF</a>
+          {{/if}}
+        </td>
+      </tr>
+      {{/each}}
+    </table>
+  </script>
+  <script>
+		function loadData(callback) {
+			var xobj = new XMLHttpRequest();
+			xobj.overrideMimeType("application/json");
+			xobj.open("GET", "/results.json", true);
+			xobj.onreadystatechange = function() {
+				if (xobj.readyState == 4 && xobj.status == "200") {
+					callback(xobj.responseText);
+				}
+			};
+			xobj.send(null);
+		}
+		function init() {
+			loadData(function(response) {
+				var context = { records: JSON.parse(response) };
+				var source = document.getElementById("entry-template").innerHTML;
+				var template = Handlebars.compile(source);
+				var html = template(context);
+				document.getElementById("target").innerHTML = html;
+			});
+		}
+	</script>
+</body>
+</html>

@@ -20,6 +20,7 @@ import json
 import multiprocessing
 import os
 from pathlib import Path
+from shutil import copyfile
 
 from handlers import (DomHandler, EpubHandler, HTMLHandler, MarkdownHandler,
                       MetadataHandler, MobiHandler, PDFHandler,
@@ -76,6 +77,16 @@ def merge_json():
 
     with open(f'{output_dir}/results.json', 'w') as json_results_fp:
         json.dump(results, json_results_fp, indent=True)
+
+
+def copy_ui():
+    output_dir = get_output_dir()
+    __import__('ipdb').set_trace()
+    readpath = __loader__.path[:__loader__.path.rfind('/')]
+
+    for uifile in ["index.html", "handlebars.js"]:
+        copyfile(f"{readpath}/ui/{uifile}", f"{output_dir}/{uifile}")
+    get_logger().warning("cd output && python -m http.server")
 
 
 def parse_args():
@@ -160,6 +171,7 @@ def main():
 
     # Read all individual json files and merge them
     merge_json()
+    copy_ui()
 
 
 if __name__ == "__main__":
