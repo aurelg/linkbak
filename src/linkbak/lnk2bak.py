@@ -25,7 +25,7 @@ from shutil import copyfile
 from handlers import (DomHandler, EpubHandler, HTMLHandler, MarkdownHandler,
                       MetadataHandler, MobiHandler, PDFHandler,
                       ReadableHandler, ReadablePDFHandler)
-from utils import get_link_path, get_links, get_logger, get_output_dir
+from utils import flocked, get_link_path, get_links, get_logger, get_output_dir
 
 
 def start_link_handler(link, args):
@@ -59,6 +59,9 @@ def start_link_handler(link, args):
 
     MetadataHandler().commit(link, meta, args)
 
+    # Read all individual json files and merge them
+    merge_json()
+
 
 def merge_json():
     """
@@ -68,24 +71,32 @@ def merge_json():
 
     output_dir = get_output_dir()
 
-    for jsonfile in Path(output_dir).glob("*/metadata.json"):
-        if str(jsonfile) == f"{output_dir}/results.json":
-            continue
-        get_logger().debug("Appending %s", str(jsonfile))
-        with jsonfile.open() as json_fp:
-            results.append(json.load(json_fp))
-
     with open(f'{output_dir}/results.json', 'w') as json_results_fp:
-        json.dump(results, json_results_fp, indent=True)
+        with flocked(json_results_fp):
+            for jsonfile in Path(output_dir).glob("*/metadata.json"):
+                if str(jsonfile) == f"{output_dir}/results.json":
+                    continue
+                get_logger().debug("Appending %s", str(jsonfile))
+                with jsonfile.open() as json_fp:
+                    results.append(json.load(json_fp))
+
+            json.dump(results, json_results_fp, indent=True)
 
 
 def copy_ui():
+    """
+    Copy UI files (index.html and handlebars.js) from the linkbak/ui/ path
+    to the output directory
+    """
     output_dir = get_output_dir()
-    __import__('ipdb').set_trace()
     readpath = __loader__.path[:__loader__.path.rfind('/')]
 
     for uifile in ["index.html", "handlebars.js"]:
-        copyfile(f"{readpath}/ui/{uifile}", f"{output_dir}/{uifile}")
+        target_path = Path(f"{output_dir}/{uifile}")
+
+        if target_path.exists():
+            target_path.unlink()
+        copyfile(f"{readpath}/ui/{uifile}", target_path)
     get_logger().warning("cd output && python -m http.server")
 
 
@@ -157,6 +168,7 @@ def main():
 
     if not outdir.exists():
         outdir.mkdir()
+    copy_ui()
 
     nb_workers = args.j if args.j else os.cpu_count()
     get_logger().warning("Using %s workers", nb_workers)
@@ -168,10 +180,6 @@ def main():
     else:
         for link in get_links(args.file[0]):
             start_link_handler(link, args)
-
-    # Read all individual json files and merge them
-    merge_json()
-    copy_ui()
 
 
 if __name__ == "__main__":

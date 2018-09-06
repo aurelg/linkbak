@@ -1,6 +1,7 @@
 """
 Misc helper functions
 """
+import fcntl
 import hashlib
 import logging
 
@@ -105,3 +106,17 @@ def get_links(filename):
                 pass
 
     get_logger().error("Unknown file type")
+
+
+class flocked(object):
+    """ File locking """
+    def __init__(self, file):
+        self.file = file
+
+    def __enter__(self):
+        fcntl.lockf(self.file.fileno(), fcntl.LOCK_EX)
+
+        return self.file
+
+    def __exit__(self, *args):
+        fcntl.lockf(self.file.fileno(), fcntl.LOCK_UN)
