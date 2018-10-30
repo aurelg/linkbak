@@ -1,27 +1,26 @@
 -i https://pypi.org/simple
 backcall==0.1.0
 beautifulsoup4==4.6.3
-certifi==2018.8.24
+certifi==2018.10.15
 chardet==3.0.4
-cssselect==1.0.3; python_version != '3.2.*'
+cssselect==1.0.3
 decorator==4.3.0
 feedparser==5.2.1
 idna==2.7
 ipdb==0.11
 ipython-genutils==0.2.0
-ipython==6.5.0
-jedi==0.12.1
-lxml==4.2.4
+ipython==7.1.1 ; python_version >= '3.3'
+jedi==0.13.1
+lxml==4.2.5
 parso==0.3.1
-pexpect==4.6.0; sys_platform != 'win32'
-pickleshare==0.7.4
-prompt-toolkit==1.0.15
+pexpect==4.6.0 ; sys_platform != 'win32'
+pickleshare==0.7.5
+prompt-toolkit==2.0.6
 ptyprocess==0.6.0
 pygments==2.2.0
 readability-lxml==0.7
-requests==2.19.1
-simplegeneric==0.8.1
+requests==2.20.0
 six==1.11.0
 traitlets==4.3.2
-urllib3==1.23; python_version >= '2.6'
+urllib3==1.24
 wcwidth==0.1.7
